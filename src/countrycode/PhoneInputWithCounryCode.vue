@@ -1,13 +1,16 @@
 <template>
     <div :class="[$attrs.class]" style="width: 100%" >
         <label v-if="label" class="form-label" :for="id">{{ label }}</label>
-        <div class="phone_input" :style="styles" :class="{'invalid-number': !is_valid}">
-            <CountryCode v-model="country_code" />
+        <div class="phone_input" :style="styles" :class="{'valid-number': is_valid, 'invalid-number': is_valid === false,}">
+            <CountryCode v-model="country_code"  />
             <div class="borders">
                 <p>|</p>
             </div>
              <input id="phone_number" class="phone__number__input " type="text" v-model="phone_number"
-                                    placeholder="11 111 11 11" style="border: none" />
+                placeholder="11 111 11 11" style="border: none"
+                :disabled="!country_code"  
+                @input="(event)=> $emit('update:phone_number', event.target.value.replace(/[^0-9]/g, ''))"
+            />
         </div>
     </div>
 </template>
@@ -37,33 +40,27 @@ export default {
     },
     data(){
         return {
-            // country_code: '',
-            // phone_number: '',
-            is_valid: true,
+            is_valid: 'undefined',
         }
     },
 
     watch: {
         country_code(){
              this.checkValid()
-            // console.log(this.country_code)
         },
         phone_number(){
             this.checkValid()
         }
     },
-    // emits: ["update:modelValue"],
     computed: {
         styles() {
             return this.error || !this.is_valid
-                ? "border: 1px solid #C81717;"
-                : "border: 1px solid #C8C8C8;";
+                ? "border: 1px solid #C81717;" : (this.is_valid == true ? "border: 1px solid ##16a34a;" : "border: 1px solid #C8C8C8;");
         },
     },
     methods: {
         checkValid(){
             const phoneNumber = parsePhoneNumber(this.phone_number, this.country_code)
-
             if(phoneNumber && phoneNumber.isValid()){
                 this.is_valid = true;
             }else {
@@ -87,21 +84,6 @@ export default {
     box-sizing: border-box;
     border-radius: 5px;
 
-    select {
-        width: 30%;
-        border-right: none;
-        border-radius: 5px 0px 0px 5px;
-
-        &:focus {
-            // border: 1px solid $tints-4;
-        }
-
-        &::after {
-            content: "";
-            width: 2px;
-            height: 100%;
-        }
-    }
 
     input.phone__number__input {
             background: #fff;
@@ -146,7 +128,7 @@ export default {
         p {
             color: #abbecc;
             margin: 0;
-            transform: scale(1.5, 1);
+            transform: scale(.5, 1.6);
         }
     }
 }
@@ -161,6 +143,10 @@ export default {
 
 .invalid-number {
     border: 1px solid red;
+    border-radius:5px;
+}
+.valid-number {
+    border: 1px solid green;
     border-radius:5px;
 }
 </style>

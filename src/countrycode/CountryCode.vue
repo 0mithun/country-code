@@ -4,10 +4,10 @@
             <div v-if="!openDropdown"  ref="selectLabel" class="select__label" v-html="currentItem" @click="toggleDropdown"></div>
             <input class="search" placeholder="Search" type="text" autofocus ref="search" v-model="search" v-if="openDropdown" />
         </div>
-        <ul class="select-dropdown active" ref="selectDropdown" id="selectDropdown"  v-show="openDropdown">
-            <li class="option" :data-value="country.name" v-for="country in filterdCountry" :key="country.tld" :id="`item-${country.iso}`"
+        <ul class="select-dropdown active" ref="selectDropdown" id="selectDropdown" v-show="openDropdown" >
+            <li class="option" :class="{selected: isSelected(country)}" :data-value="country.name" v-for="country in filterdCountry" :key="country.tld" :id="`item-${country.iso}-${country.dialCode}`"
                 @click="selectItem(country)">
-                <span>{{ country.unicodeFlag }} {{ country.dialCode }}</span>
+                <span>{{ country.unicodeFlag }} +{{ country.dialCode }}</span>
                 <span> {{ country.name }}</span>
             </li>
         </ul>
@@ -41,157 +41,58 @@ export default {
     data() {
         return {
             countries: countrylist,
-            selected: null,
             openDropdown: false,
             search: "",
         };
     },
-    watch: {
-        //  $props: {
-        //     handler() {
-        //         if(this.modelValue){
-        //             const item = this.countries.filter(country=> {
-        //                 return country.iso === this.modelValue;
-        //             })
-        //             if(item.length){
-        //                 this.selected = item[0];
-        //             }
-        //         }
-        //     },
-        //     deep: true,
-        //     immediate: true,
-        // },
-    },
-    mounted(){
-        // this.$refs.selectDropdown.scrollTop = this.getScrollPosition()
-    },
 
     computed: {
-            filterdCountry(){
-                return this.countries.filter(item=> {
-                    return item.name.toLowerCase().startsWith(this.search.toLowerCase());
-                })
-            },
-            currentItem(){
-                const country = this.countries.find(item=> {
-                    return item.iso == this.modelValue;
-                })
+        filterdCountry(){
+            return this.countries.filter(item=> {
+                return item.name.toLowerCase().startsWith(this.search.toLowerCase());
+            })
+        },
+        currentItem(){
+            const country = this.countries.find(item=> item.iso == this.modelValue)
 
-                if(country){
-                     return `<span>${country.unicodeFlag}</span><span> ${country.dialCode}</span>`;
-                }
-                 return `<span>+00000</span>`;
-            },
-            scrollTopPosition(){
-                return 50;
+            if(country){
+                return `<span>${country.unicodeFlag}</span><span> ${country.dialCode}</span>`;
             }
+            return `<span>+00000</span>`;
+        },
     },
     methods: {
-        getPosition(parent, child){
-            var parentPos = document.getElementById(parent).getBoundingClientRect(),
-                    childPos = document.getElementById(child).getBoundingClientRect(),
-                    relativePos = {};
-
-                relativePos.top = childPos.top - parentPos.top,
-                relativePos.right = childPos.right - parentPos.right,
-                relativePos.bottom = childPos.bottom - parentPos.bottom,
-                relativePos.left = childPos.left - parentPos.left;
-
-                console.log(parentPos, childPos);
-
-                return relativePos;
-        },
-        setScrollPosition(){
-            //`item-${country.iso}`
-            const item = document.getElementById(`item-${this.modelValue}`)
-            if(item){
-                // return item.scrollTop;
-                // console.log('position changing', item.offsetTop)
-                // console.log(item)
-
-                // const position = this.getPosition(`item-${this.modelValue}`, 'selectDropdown')
-                // console.log(position)
-                console.log(document.querySelector(`#item-${this.modelValue}`).getBoundingClientRect())
-
-                // this.$refs.selectDropdown.scrollTop = item.scrollTop;
-                // this.$refs.selectDropdown.focus()
-            }
-
-        },
-        searchCountry() {
-            const data = this.countries.filter((country) => {
-                if (country.dialCode) {
-                    return (
-                        country.dialCode.toString().startsWith(this.search.toLowerCase()) ||
-                        country.iso.toString().toLowerCase().startsWith(this.search.toLowerCase()) ||
-                        country.name.toLowerCase().startsWith(this.search.toLowerCase())
-                    );
-                }
-            });
-            this.filterdCountry = data;
+        isSelected(country){   
+            return this.modelValue == country.iso
         },
         selectItem(country) {
             this.$emit("update:modelValue", country.iso);
-
             this.openDropdown = false;
         },
-        // toggleClass(e) {
-        //     if (this.disabled) {
-        //         return;
-        //     }
-        //     e.stopImmediatePropagation();
-        //     this.$refs.select.classList.add("selected");
-        //     this.$refs.selectDropdown.classList.add("active");
-
-        //     this.openDropdown = true;
-        //     document.addEventListener("click", this.outsideClick);
-        // },
-
-        // closeDropdown() {
-        //     this.$refs.select.classList.remove("selected");
-        //     this.$refs.selectDropdown.classList.remove("active");
-        //     this.openDropdown = false;
-        //     document.removeEventListener("click", this.outsideClick);
-        // },
-
-        // outsideClick(e) {
-        //     const parent = this.$refs.selectParent;
-        //     const label = this.$refs.selectLabel;
-        //     if (e.target !== parent && !label && !parent.contains(e.target)) {
-        //         this.closeDropdown();
-        //     }
-        // },
-
-
         toggleDropdown() {
-            this.openDropdown = !this.openDropdown;
-            if(this.modelValue){
-                this.setScrollPosition()
+            if(!this.openDropdown){
+                this.openDropdown = true;        
+                setTimeout(() => {
+                    this.$refs.search.focus();
+                    const country = this.countries.find(item=> item.iso == this.modelValue)                 
+                    if(country){
+                        const item = document.getElementById(`item-${country.iso}-${country.dialCode}`)
+                        this.$refs.selectDropdown.scrollTop = item.offsetTop - 10;  
+                    }                    
+                }, 100);
+            }else {
+                this.openDropdown = false;
             }
-
         },
         closeDropdown() {
-            this.search = ''
+            this.search = '';
             this.openDropdown = false;
         }
     },
-
-    // unmounted() {
-    //     document.removeEventListener("click", this.outsideClick);
-    // },
 };
 </script>
 
 <style lang="scss" scoped>
-@keyframes feadIn {
-    0% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
-}
 
 .dropdown {
     position: relative;
@@ -234,16 +135,16 @@ export default {
     width: 400px;
 
     &::-webkit-scrollbar {
-        // background: green;
-        width: 30px;
+        width: 20px;
         background-color: #eff3f6;
     }
 
     &::-webkit-scrollbar-thumb {
-        background: #130945;
-        border-radius: 5px;
-        height: 50px;
+        background: #c8c8c8ed;;
+        border-radius: 2px;
+        // height: 50px;
         cursor: pointer;
+        min-height: 50px;
     }
 }
 
@@ -265,17 +166,8 @@ export default {
 .select-dropdown .option:last-child {
     border-bottom: none;
 }
-
-.label {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    font-family: "Lato";
-    font-style: normal;
-    //   font-weight: 400;
-    font-size: 16px;
-    line-height: 24px;
+.select-dropdown .option.selected {
+   background-color: #c8c8c8ed;
 }
 
 .search {

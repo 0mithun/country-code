@@ -10,9 +10,6 @@
     </my-header>
   </div>
   <div>
-    {{ form.phone_number }}
-  <br>
-    {{ form.country_code }}
     <div style="width:500px; margin:0 auto;">
       <PhoneNumberWithCountryCode v-model:phone_number="form.phone_number" v-model:country_code="form.country_code" />
     </div>
