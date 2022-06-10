@@ -2,7 +2,7 @@
   <div>
     <div style="width:500px; margin:0 auto;">
       {{ form }}
-      <PhoneNumberWithCountryCode v-model:phone_number="form.phone_number"  label="select phone" />
+      <PhoneNumberWithCountryCode country-lebel="tor country select koro" v-model:phone_number="form.phone_number"  label="select phone" />
     </div>
   </div>
 </template>

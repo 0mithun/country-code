@@ -134,7 +134,7 @@ export default {
     color: #323232;
     display: flex;
     align-items: center;
-    width: 20%;
+    width: 30%;
 }
 
 .select-dropdown.active {

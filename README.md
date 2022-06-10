@@ -102,8 +102,8 @@ International Phone Number Input with Country Code.
             v-model:phone_number="form.phone_number" 
             v-model:country_code="form.country_code"
             placeholder="11 111 11 11"
-            countryPlaceholder="Search"
-            countryLebel="Select Country"
+            country-placeholder="Search"
+            country-lebel="Select Country"
         />
   </template>
 ```
