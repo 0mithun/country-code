@@ -4,11 +4,13 @@
     "build": "vue-cli-service build --target lib --name vue3-phone-number-input ./src/countrycode/PhonrNumber.js"
   },
   "main": ".dist/vue3-phone-number-input.common.js",
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "libphonenumber-js": "^1.10.6",
     "uuid": "^8.3.2",
     "vue": "^3.2.13",
-    "vue-router": "^4.0.3",
     "vue3-click-away": "^1.2.4"
   },
   "devDependencies": {
@@ -23,16 +25,19 @@
     "not dead",
     "not ie 11"
   ],
-  "name": "Vue3-phone-input",
+  "name": "vue3-phone-number-input",
   "description": "A Vue3 Phone Number Input Component with validation check",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "author": {
-      "name": "Mithun Halder",
-      "email": "mithunrptc@gmail.com"
+    "name": "Mithun Halder",
+    "email": "mithunrptc@gmail.com"
   },
   "license": "MIT",
-  "keywords": ["Vue3", "Phone Input"],
+  "keywords": [
+    "Vue3",
+    "Phone Input"
+  ],
   "repository": "https://github.com/0mithun/vue3-phone-number-input",
   "bugs": "https://github.com/0mithun/vue3-phone-number-input/issues"
 }
