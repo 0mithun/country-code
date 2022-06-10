@@ -3,7 +3,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --target lib --name vue3-phone-number-input ./src/countrycode/PhonrNumber.js"
   },
-  "main": ".dist/vue3-phone-number-input.common.js",
+  "main": "./dist/vue3-phone-number-input.common.js",
   "files": [
     "dist"
   ],
@@ -27,7 +27,7 @@
   ],
   "name": "vue3-phone-number-input",
   "description": "A Vue3 Phone Number Input Component with validation check",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": false,
   "author": {
     "name": "Mithun Halder",
