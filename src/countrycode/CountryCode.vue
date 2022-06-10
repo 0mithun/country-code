@@ -114,7 +114,6 @@ export default {
     animation: fadeIn;
     background: #FFFFFF;
     height: 40px;
-    // border: 1px solid #C8C8C8;
     box-sizing: border-box;
     border-radius: 5px;
     font-family: "Lato";
@@ -137,18 +136,15 @@ export default {
 
 .select {
     background: #ffffff;
-    // border: 1px solid #c8c8c8;
     box-sizing: border-box;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    // cursor: pointer;
 
     border-right: none;
     border-radius: 5px 0px 0px 5px;
     display: block;
     text-align: left;
-    // padding: 7px 20px;
 }
 
 .select-dropdown {
@@ -173,7 +169,6 @@ export default {
     &::-webkit-scrollbar-thumb {
         background: #c8c8c8ed;;
         border-radius: 2px;
-        // height: 50px;
         cursor: pointer;
         min-height: 50px;
     }
@@ -189,7 +184,6 @@ export default {
 
     font-family: "Lato";
     font-style: normal;
-    //   font-weight: 400;
     font-size: 16px;
     line-height: 24px;
 }
@@ -209,7 +203,6 @@ export default {
     padding: 0;
     font-family: "Lato";
     font-style: normal;
-    //   font-weight: 400;
     font-size: 16px;
     line-height: 24px;
     padding-left: 10px;
@@ -228,12 +221,10 @@ export default {
 }
 
 .select__label {
-    // width: 100%;
     padding-left: 10px;
     cursor: pointer;
        font-family: "Lato";
     font-style: normal;
-    //   font-weight: 400;
     font-size: 16px;
     line-height: 24px;
     display: flex;
@@ -269,4 +260,5 @@ label :hover {
     cursor:pointer;
     line-height:24px;
 }
+
 </style>
