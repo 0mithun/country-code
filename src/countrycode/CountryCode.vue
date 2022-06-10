@@ -3,7 +3,7 @@
     <div class="dropdown" ref="selectParent" v-click-away="()=>closeDropdown()" >
         <div class="select" value="select" ref="select" >
             <div v-if="!openDropdown"  ref="selectLabel" class="select__label"  v-html="currentItem" @click="toggleDropdown"></div>
-            <input class="search" placeholder="Search" type="text" autofocus ref="search" v-model="search" v-if="openDropdown" />
+            <input class="search" :placeholder="countryPlaceholder" type="text" autofocus ref="search" v-model="search" v-if="openDropdown" />
         </div>
         <ul class="select-dropdown active" ref="selectDropdown" id="selectDropdown" v-show="openDropdown" >
             <li class="option" :class="{selected: isSelected(country)}" :data-value="country.name" v-for="country in filterdCountry" :key="country.tld" :id="`item-${country.iso}-${country.dialCode}`"
@@ -34,7 +34,11 @@ export default {
             default: false,
         },
         modelValue: String,
-        placeholder: {
+        countryPlaceholder: {
+            type: String,
+            default: 'Search Country'
+        },
+        countryLebel: {
             type: String,
             default: 'Search Country'
         },
@@ -60,19 +64,21 @@ export default {
             })
         },
         currentItem(){
+            if(this.modelValue == null || this.modelValue == '' ) return `<span style="color:#323232;">${this.countryLebel}</span>`;
+
             const country = this.countries.find(item=> {
               return  item.iso.toLowerCase() == this.modelValue.toLowerCase()
             })
 
             if(country){
                 return `
-                    <div class="default-flat iti-flag ${this.modelValue.toLowerCase()}"></div>
+                    <div class="default-flag iti-flag ${this.modelValue.toLowerCase()}" style="transform: scale(1.2);"></div>
                     <div class="default-item">
-                        <span style="margin-left:10px;">+${country.dialCode} ${country.name }</span>
+                        <span style="margin-left:10px;">+${country.dialCode}</span>
                     </div>
                 `;
             }
-            return `<span style="color:#323232;">${this.placeholder}</span>`;
+            return `<span style="color:#323232;">${this.countryLebel}</span>`;
         },
     },
     methods: {
@@ -128,6 +134,7 @@ export default {
     color: #323232;
     display: flex;
     align-items: center;
+    width: 20%;
 }
 
 .select-dropdown.active {
@@ -145,6 +152,7 @@ export default {
     border-radius: 5px 0px 0px 5px;
     display: block;
     text-align: left;
+    overflow: hidden;
 }
 
 .select-dropdown {
@@ -259,6 +267,14 @@ label {
 label :hover {
     cursor:pointer;
     line-height:24px;
+}
+
+.iti-flag {
+    transform: scale(1.2);
+}
+
+.default-flag.ini-flag {
+    transform: scale(1.2);
 }
 
 </style>

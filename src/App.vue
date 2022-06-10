@@ -1,14 +1,14 @@
 <template>
   <div>
     <div style="width:500px; margin:0 auto;">
-      <PhoneNumberWithCountryCode v-model:phone_number="form.phone_number" v-model:country_code="form.country_code" label="select phone" />
+      {{ form }}
+      <PhoneNumberWithCountryCode v-model:phone_number="form.phone_number"  label="select phone" />
     </div>
   </div>
 </template>
 
 <script>
 import { reactive } from '@vue/reactivity'
-import {inject} from 'vue'
 export default {
   setup() {
     const form = reactive({

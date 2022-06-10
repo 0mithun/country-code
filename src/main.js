@@ -6,9 +6,7 @@ import phoneInput from './countrycode/PhonrNumber';
 
 const app = createApp(App)
     .use(phoneInput, {
-        placeholder: 'Enter your phone number'
+        placeholder: 'Enter kopk',
+        countryLebel: "desh select"
     })
     .mount('#app')
-
-
-// app.use(myplugin)

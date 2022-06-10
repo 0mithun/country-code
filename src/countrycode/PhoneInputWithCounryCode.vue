@@ -1,14 +1,23 @@
 <template>
     <div :class="[$attrs.class]" style="width: 100%" >
-        <label v-if="label" class="form-label" :for="id">{{ label }}</label>
         <div class="phone_input" :class="classList">
-            <CountryCode v-model="country_code"  />
+            <CountryCode 
+                v-model="country_code" 
+                :countryLebel="countryLebelText" 
+                :countryPlaceholder="countryPlaceholderText"
+                @changeCountry="$emit('update:country_code', country_code)"
+            />
             <div class="borders">
                 <p>|</p>
             </div>
-             <input id="phone_number" class="phone__number__input " type="text" v-model="phone_number"
-                :placeholder="placeholderText" style="border: none"
+             <input 
+                id="phone_number" 
+                class="phone__number__input " 
+                type="text" v-model="phone_number"
+                style="border: none"
+                :placeholder="placeholderText" 
                 :disabled="!country_code"
+                @input="(event)=> $emit('update:phone_number', event.target.value)"
             />
         </div>
     </div>
@@ -19,7 +28,6 @@ import { v4 as uuid } from "uuid";
 import CountryCode from './CountryCode.vue'
 
 import parsePhoneNumber from 'libphonenumber-js'
-import { computed, inject, watch } from '@vue/runtime-core';
 
 export default {
     inheritAttrs: false,
@@ -37,48 +45,63 @@ export default {
             type: String,
             default: '11 111 11 11'
         },
+        countryLebel: {
+            type: String,
+            default: 'Select Country'
+        },
+        countryPlaceholder: {
+            type: String,
+            default: 'Search'
+        },
         error: String,
         label: String,
         country_code: null,
         phone_number: null,
+
     },
+    watch: {
+        country_code(){
+            this.$emit('update:phone_number', this.phone_number)
+        },
+        phone_number(){
+            this.$emit('update:country_code', this.country_code)
+        }
+    },
+    computed: {
+        styles() {
+            return this.error || !this.is_valid
+                ? "border: 1px solid #C81717;" : (this.is_valid == true ? "border: 1px solid #16a34a;" : "border: 1px solid #C8C8C8;");
+        },
+       classList(){
+            if(!this.phone_number == null || this.phone_number == '') return 'normal-number';
 
-    setup(props, {emit}) {
-        const placeholderValue = inject('placeholder')
-
-        const classList = computed(()=> {
-              if(!props.phone_number == null || props.phone_number == '') return 'normal-number';
-
-            const phoneNumber = parsePhoneNumber(props.phone_number, props.country_code.toUpperCase())
+            const phoneNumber = parsePhoneNumber(this.phone_number, this.country_code.toUpperCase())
             if(phoneNumber && phoneNumber.isValid()){
                 return 'valid-number';
             }
-            return 'invalid-number';;
-        })
-
-        const placeholderText = computed(()=>placeholderValue ?? props.placeholder)
-        
-
-        watch(
-            () => props.phone_number,
-            ()=> {
-                emit('update:phone_number', props.phone_number)
-                // props.phone_number = props.phone_number.replace(/[^0-9]/g, '')
-                //                @input="(event)=> $emit('update:phone_number', event.target.value.replace(/[^0-9]/g, ''))"
-
-            }
-        );
-        watch(
-            () => props.country_code,
-            ()=> {
-                emit('update:country_code', props.country_code)
-            }
-        );
-
-        return {
-            classList,
-            placeholderText
-        }
+            
+            return 'invalid-number';
+       },
+        placeholderText(){
+            return this.placeholderValue?? this.placeholder
+        },
+        countryLebelText(){
+            return this.countryLebelValue?? this.countryLebel
+        },
+        countryPlaceholderText(){
+            return this.countryPlaceholderValue?? this.countryPlaceholder
+        },
+    },
+    inject: {
+        countryPlaceholderValue: {
+            from: 'countryPlaceholder'
+        },
+        countryLebelValue: {
+            from: 'countryLebel'
+        },
+        placeholderValue: {
+            from: 'placeholder'
+        },
     }
 };
 </script>
