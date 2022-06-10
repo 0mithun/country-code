@@ -27,7 +27,7 @@
   ],
   "name": "vue3-phone-number-input",
   "description": "A Vue3 Phone Number Input Component with validation check",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": false,
   "author": {
     "name": "Mithun Halder",
