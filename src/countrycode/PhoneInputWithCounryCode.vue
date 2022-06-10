@@ -1,15 +1,14 @@
 <template>
     <div :class="[$attrs.class]" style="width: 100%" >
         <label v-if="label" class="form-label" :for="id">{{ label }}</label>
-        <div class="phone_input" :style="styles" :class="{'valid-number': is_valid, 'invalid-number': is_valid === false,}">
+        <div class="phone_input" :class="classList">
             <CountryCode v-model="country_code"  />
             <div class="borders">
                 <p>|</p>
             </div>
              <input id="phone_number" class="phone__number__input " type="text" v-model="phone_number"
-                placeholder="11 111 11 11" style="border: none"
-                :disabled="!country_code"  
-                @input="(event)=> $emit('update:phone_number', event.target.value.replace(/[^0-9]/g, ''))"
+                :placeholder="placeholderText" style="border: none"
+                :disabled="!country_code"
             />
         </div>
     </div>
@@ -20,6 +19,7 @@ import { v4 as uuid } from "uuid";
 import CountryCode from './CountryCode.vue'
 
 import parsePhoneNumber from 'libphonenumber-js'
+import { computed, inject, watch } from '@vue/runtime-core';
 
 export default {
     inheritAttrs: false,
@@ -33,44 +33,53 @@ export default {
                 return `text-input-${uuid()}`;
             },
         },
+        placeholder: {
+            type: String,
+            default: '11 111 11 11'
+        },
         error: String,
         label: String,
         country_code: null,
         phone_number: null,
     },
-    data(){
-        return {
-            is_valid: 'undefined',
-        }
-    },
 
-    watch: {
-        country_code(){
-             this.checkValid()
-        },
-        phone_number(){
-            this.checkValid()
-        }
-    },
-    computed: {
-        styles() {
-            return this.error || !this.is_valid
-                ? "border: 1px solid #C81717;" : (this.is_valid == true ? "border: 1px solid ##16a34a;" : "border: 1px solid #C8C8C8;");
-        },
-    },
-    methods: {
-        checkValid(){
-            const phoneNumber = parsePhoneNumber(this.phone_number, this.country_code)
+    setup(props, {emit}) {
+        const placeholderValue = inject('placeholder')
+
+        const classList = computed(()=> {
+              if(!props.phone_number == null || props.phone_number == '') return 'normal-number';
+
+            const phoneNumber = parsePhoneNumber(props.phone_number, props.country_code.toUpperCase())
             if(phoneNumber && phoneNumber.isValid()){
-                this.is_valid = true;
-            }else {
-                this.is_valid = false;
+                return 'valid-number';
             }
+            return 'invalid-number';;
+        })
 
-            this.$emit('update:phone_number', this.phone_number)
-            this.$emit('update:country_code', this.country_code)
+        const placeholderText = computed(()=>placeholderValue ?? props.placeholder)
+        
+
+        watch(
+            () => props.phone_number,
+            ()=> {
+                emit('update:phone_number', props.phone_number)
+                // props.phone_number = props.phone_number.replace(/[^0-9]/g, '')
+                //                @input="(event)=> $emit('update:phone_number', event.target.value.replace(/[^0-9]/g, ''))"
+
+            }
+        );
+        watch(
+            () => props.country_code,
+            ()=> {
+                emit('update:country_code', props.country_code)
+            }
+        );
+
+        return {
+            classList,
+            placeholderText
         }
-    },
+    }
 };
 </script>
 
@@ -83,6 +92,7 @@ export default {
 
     box-sizing: border-box;
     border-radius: 5px;
+    background-color: white;
 
 
     input.phone__number__input {
@@ -117,8 +127,6 @@ export default {
         width: 5px;
         background-color: white;
         height: 40px;
-        // border-top: 1px solid $tones-1;
-        // border-bottom: 1px solid $tones-1;
         display: flex;
         align-items: center;
 
@@ -147,6 +155,10 @@ export default {
 }
 .valid-number {
     border: 1px solid green;
+    border-radius:5px;
+}
+.normal-number {
+    border: 1px solid #C8C8C8;
     border-radius:5px;
 }
 </style>

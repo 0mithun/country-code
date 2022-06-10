@@ -1,27 +1,29 @@
 <template>
-    <div class="dropdown" ref="selectParent" v-click-away="()=>closeDropdown()">
+     <label for="country" @click="toggleDropdown">{{ label }}</label>
+    <div class="dropdown" ref="selectParent" v-click-away="()=>closeDropdown()" >
         <div class="select" value="select" ref="select" >
-            <div v-if="!openDropdown"  ref="selectLabel" class="select__label" v-html="currentItem" @click="toggleDropdown"></div>
+            <div v-if="!openDropdown"  ref="selectLabel" class="select__label"  v-html="currentItem" @click="toggleDropdown"></div>
             <input class="search" placeholder="Search" type="text" autofocus ref="search" v-model="search" v-if="openDropdown" />
         </div>
         <ul class="select-dropdown active" ref="selectDropdown" id="selectDropdown" v-show="openDropdown" >
             <li class="option" :class="{selected: isSelected(country)}" :data-value="country.name" v-for="country in filterdCountry" :key="country.tld" :id="`item-${country.iso}-${country.dialCode}`"
                 @click="selectItem(country)">
-                <span>{{ country.unicodeFlag }} +{{ country.dialCode }}</span>
-                <span> {{ country.name }}</span>
+                <div class="iti-flag" :class="`${country.iso}`">
+                </div>
+                <div class="country">
+                    <span class="dial-code">+{{ country.dialCode }}</span>
+                    <span class="country-name"> {{ country.name }}</span>
+                </div>
             </li>
         </ul>
     </div>
 </template>
 
 <script>
-const countrylist = require("./countryList.json");
+const countrylist = require("./countries.json");
+import './flugs.css'
 import { directive } from "vue3-click-away";
-
 export default {
-    directives: {
-        ClickAway: directive
-    },
     props: {
         label: {
             type: [String, Number],
@@ -34,9 +36,14 @@ export default {
         modelValue: String,
         placeholder: {
             type: String,
-            default: "Search"
-        }
+            default: 'Search Country'
+        },
+         error: String,
     },
+    directives: {
+        ClickAway: directive
+    },
+
 
     data() {
         return {
@@ -45,7 +52,7 @@ export default {
             search: "",
         };
     },
-
+    emits:['changeCountry', 'update:modelValue'],
     computed: {
         filterdCountry(){
             return this.countries.filter(item=> {
@@ -53,32 +60,40 @@ export default {
             })
         },
         currentItem(){
-            const country = this.countries.find(item=> item.iso == this.modelValue)
+            const country = this.countries.find(item=> {
+              return  item.iso.toLowerCase() == this.modelValue.toLowerCase()
+            })
 
             if(country){
-                return `<span>${country.unicodeFlag}</span><span> ${country.dialCode}</span>`;
+                return `
+                    <div class="default-flat iti-flag ${this.modelValue.toLowerCase()}"></div>
+                    <div class="default-item">
+                        <span style="margin-left:10px;">+${country.dialCode} ${country.name }</span>
+                    </div>
+                `;
             }
-            return `<span>+00000</span>`;
+            return `<span style="color:#323232;">${this.placeholder}</span>`;
         },
     },
     methods: {
-        isSelected(country){   
+        isSelected(country){
             return this.modelValue == country.iso
         },
         selectItem(country) {
             this.$emit("update:modelValue", country.iso);
+            this.$emit('changeCountry', country.iso)
             this.openDropdown = false;
         },
         toggleDropdown() {
             if(!this.openDropdown){
-                this.openDropdown = true;        
+                this.openDropdown = true;
                 setTimeout(() => {
                     this.$refs.search.focus();
-                    const country = this.countries.find(item=> item.iso == this.modelValue)                 
+                    const country = this.countries.find(item=> item.iso == this.modelValue)
                     if(country){
                         const item = document.getElementById(`item-${country.iso}-${country.dialCode}`)
-                        this.$refs.selectDropdown.scrollTop = item.offsetTop - 10;  
-                    }                    
+                        this.$refs.selectDropdown.scrollTop = item.offsetTop - 10;
+                    }
                 }, 100);
             }else {
                 this.openDropdown = false;
@@ -97,7 +112,23 @@ export default {
 .dropdown {
     position: relative;
     animation: fadeIn;
-    width: 30%;
+    background: #FFFFFF;
+    height: 40px;
+    // border: 1px solid #C8C8C8;
+    box-sizing: border-box;
+    border-radius: 5px;
+    font-family: "Lato";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    display: block;
+    width: 100%;
+    padding: 3.75px 7.5px;
+    outline: none;
+    color: #323232;
+    display: flex;
+    align-items: center;
 }
 
 .select-dropdown.active {
@@ -124,7 +155,7 @@ export default {
     max-height: 200px;
     overflow-y: auto;
     position: absolute;
-    top: 33px;
+    top: 40px;
     left: 0;
     display: none;
     background: #ffffff;
@@ -205,5 +236,37 @@ export default {
     //   font-weight: 400;
     font-size: 16px;
     line-height: 24px;
+    display: flex;
+    align-items: center;
+}
+
+.country {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .dial-code {
+        margin-left: 10px;
+    }
+    .country-name {
+        margin-left: 15px;
+    }
+}
+
+label {
+    font-family: "Lato";
+    font-style: normal;
+    font-size: 10px;
+    line-height: 24px;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 19px;
+    color: #003577;
+    
+}
+label :hover {
+    cursor:pointer;
+    line-height:24px;
 }
 </style>

@@ -1,24 +1,14 @@
 <template>
-  <nav>
-    <router-link to="/" v-font-size:large>Home</router-link> |
-    <router-link to="/about" v-font-size:small>About</router-link>
-  </nav>
-  <div>
-    <my-header>
-      <template  #title> Title</template>
-      <template #author>author</template>
-    </my-header>
-  </div>
   <div>
     <div style="width:500px; margin:0 auto;">
-      <PhoneNumberWithCountryCode v-model:phone_number="form.phone_number" v-model:country_code="form.country_code" />
+      <PhoneNumberWithCountryCode v-model:phone_number="form.phone_number" v-model:country_code="form.country_code" label="select phone" />
     </div>
   </div>
-  <router-view/>
 </template>
 
 <script>
 import { reactive } from '@vue/reactivity'
+import {inject} from 'vue'
 export default {
   setup() {
     const form = reactive({
